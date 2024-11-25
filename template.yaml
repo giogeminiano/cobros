@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+ 
+Globals:
+  Function:
+    Timeout: 30
+    Environment:
+      Variables:
+        POWERTOOLS_SERVICE_NAME: Ike-Api-SMS-Cobros-Wal-Develop
+ 
+ 
+Resources:
+  IkeApiSMSCobrosWalDevelopFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: com.sms.walmart.cobros.StreamLambdaHandler::handleRequest
+      Runtime: java17
+      AutoPublishAlias: production
+      SnapStart:
+        ApplyOn: PublishedVersions
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-042d726d5cfe0fe4c
+        SubnetIds:
+          - subnet-0e70b7c7104fe3556
+          - subnet-097952b8424f6cef0
+      Architectures:
+        - x86_64
+      MemorySize: 2048
+      Environment:
+        Variables:
+          JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+ 
+      Events:
+        ScheduledEvent:
+          Type: Schedule
+          Properties:
+            Schedule: "cron(0 0 * * ? *)" # Ejecuta la función todos los días a las 0:00 UTC 6:00 PM CDMX
